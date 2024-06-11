@@ -1,0 +1,42 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="schema.02_floorplan" author="Andrei Markin">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                <![CDATA[
+                    SELECT COUNT(*)
+                    FROM information_schema.tables
+                    WHERE table_name = 'floorplan';
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            <![CDATA[
+                CREATE TABLE floorplan (
+                    id              BIGSERIAL PRIMARY KEY,
+                    project_name    TEXT NOT NULL,
+                    name            TEXT NOT NULL,
+                    original        BYTEA NOT NULL,
+                    thumb           BYTEA NOT NULL,
+                    large           BYTEA NOT NULL,
+
+                    CONSTRAINT project_name_name_uq UNIQUE (project_name, name),
+
+                    CONSTRAINT project_name_fk FOREIGN KEY (project_name)
+                    REFERENCES project(name)
+                );
+
+                COMMENT ON TABLE floorplan IS 'The dictionary of floorplans';
+                COMMENT ON COLUMN floorplan.id IS 'Unique identifier of the floorplan';
+                COMMENT ON COLUMN floorplan.project_name IS 'The name of the project that the floorplan belongs to';
+                COMMENT ON COLUMN floorplan.name IS 'The name of project';
+                COMMENT ON COLUMN floorplan.original IS 'The original uploaded image of the floorplan';
+                COMMENT ON COLUMN floorplan.thumb IS '100x100 resized image of the floorplan';
+                COMMENT ON COLUMN floorplan.large IS '2000x2000 resized image of the floorplan';
+            ]]>
+        </sql>
+        <comment>Creating of "floorplan" entity</comment>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,31 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+    <changeSet id="schema.01_project" author="Andrei Markin">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                <![CDATA[
+                    SELECT COUNT(*)
+                    FROM information_schema.tables
+                    WHERE table_name = 'project';
+                ]]>
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            <![CDATA[
+                CREATE TABLE project (
+                    id      BIGSERIAL PRIMARY KEY,
+                    name    TEXT NOT NULL,
+
+                    CONSTRAINT name_uq UNIQUE (name)
+                );
+
+                COMMENT ON TABLE project IS 'The dictionary of projects';
+                COMMENT ON COLUMN project.id IS 'Unique identifier of the project';
+                COMMENT ON COLUMN project.name IS 'The name of project';
+            ]]>
+        </sql>
+        <comment>Creating of "project" entity</comment>
+    </changeSet>
+</databaseChangeLog>
